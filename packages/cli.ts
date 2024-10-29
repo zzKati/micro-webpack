@@ -1,8 +1,10 @@
 import cac from "cac"
-import fs, { write } from "fs"
+import fs from "fs"
 import path from "path"
 import acorn from "acorn"
+import pc from "picocolors"
 
+let start = Date.now()
 interface webaleOptions {
   entry: string
   output: string
@@ -152,6 +154,8 @@ async function main() {
     await fs.mkdirSync(path.dirname(config.output), { recursive: true })
   }
 
+  await fs.writeFileSync(config.output, "")
+
   // 所有的内容应该包裹在 一个立即执行函数中
   await fs.writeFileSync(config.output, `; (function (modules) {`, {
     flag: "a",
@@ -161,7 +165,7 @@ async function main() {
     config.output,
     ` 
   const installedModules = {}
-  function __webpack_require(moduleId) {
+  function __webale_require(moduleId) {
     if (installedModules[moduleId]) {
       return installedModules[moduleId].exports
     }
@@ -171,13 +175,13 @@ async function main() {
       l: false,
       exports: {},
     })
-    func.call(module.exports, module, module.exports, __webpack_require)
+    func.call(module.exports, module, module.exports, __webale_require)
     const result = module.exports
     installedModules[moduleId].l = true
     return result
   }
 
-	return  __webpack_require("${config.entry}")`,
+	return  __webale_require("${config.entry}")`,
     { flag: "a" }
   )
 
@@ -196,3 +200,5 @@ async function main() {
 }
 
 main()
+
+console.log(pc.green(`complete! Consume:${Date.now() - start}ms`))

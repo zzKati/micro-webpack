@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "a try for custom webpack",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "ts-node packages/cli.ts"
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
